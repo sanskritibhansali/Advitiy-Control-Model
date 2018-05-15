@@ -15,7 +15,7 @@ initialdelay = (LAUNCHDATE - EQUINOX).days + (LAUNCHDATE - EQUINOX).seconds/8640
 
 
 for i in range (N):
-	time = initialdelay + T[i] / 86400. #The time passed from equinox till each point in orbit in days
+	time = initialdelay + T[i] / 1440. #The time passed from equinox till each point in orbit in days
 	theta = (2*np.pi*time) / 365.256363 #Angle between intermediate frame (s) and (epsilon) frame about common z-axis
 	epsilon = 23.5 * np.pi / 180. #Angle between rotation axis and orbital plane normal
 	x=np.cos(theta)#components as got from document reffered
