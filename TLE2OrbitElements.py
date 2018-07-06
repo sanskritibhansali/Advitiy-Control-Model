@@ -4,38 +4,56 @@ from sgp4.earth_gravity import wgs72
 from sgp4.io import twoline2rv
 import math
 import constants_1U as C1U
+
 #line1 = ('1 41783U 16059A   18093.17383152  .00000069  00000-0  22905-4 0  9992') #Insert TLE Here
 #line2 = ('2 41783  98.1258 155.9141 0032873 333.2318  26.7186 14.62910114 80995') 
 
 ## https://celestrak.com/NORAD/documentation/spacetrk.pdf    page 81
-line1 = ('1 88888U 16059A   80275.98708465 +.00073094 +13844-3 +66816-4 0  9998') #Insert TLE Here
-line2 = ('2 88888  72.8435 115.9689 0086731  52.6988 110.5714 16.05824518   105') 
+#line1 = ('1 88888U 16059A   80275.98708465 +.00073094 +13844-3 +66816-4 0  9998') #Insert TLE Here
+#line2 = ('2 88888  72.8435 115.9689 0086731  52.6988 110.5714 16.05824518   105') 
 
 
+line1 = ('1 25544U 98067A   08264.51782528 -.00002182 +00000-0 -11606-4 0 0001N')
+line2 = ('2 25544 051.6416 247.4627 0006703 130.5360 325.0288 15.7212539156353N')
 sat = twoline2rv(line1, line2, wgs72) #wgs72 is a particular model used by sgp4
 pi = math.pi
 print line1
 SatNo = line1[2:7] 
 #3    08-08    Classification (U=Unclassified)    U
 ClassNo =line1[7]
-#4    10-11    International Designator (Last two digits of launch year)    98
-#5    12-14    International Designator (Launch number of the year)    067
-#6    15-17    International Designator (piece of the launch)    A
+#4	10-11	International Designator (Last two digits of launch year)	98
+LaunchYear=float(line1[9:11])
+#5	12-14	International Designator (Launch number of the year)	067
+LaunchNumber=line1[11:14]
+#6	15-17	International Designator (piece of the launch)	A
+LaunchPiece=line1[14:17]
 #7    19-20    Epoch Year (last two digits of year)    08
-EpoachYr = line1[18:20]
+EpoachYr = float(line1[18:20])
 #8    21-32    Epoch (day of the year and fractional portion of the day)    264.51782528 ##three number than decimal then 8 numbers
-Epoach = line1[20:32]
+Epoach = float(line1[20:32])
 #9    34-43    First Time Derivative of the Mean Motion divided by two [11]    -.00002182
-DMeanMotion =line1[33:43]
-####DMeanMotion = float(line1[33:42]) need to correct it -- making it float from TLE
-DMeanMotion = 0.0000007
+DMeanMotion =float(line1[33:43])
+if line1[33]=='-' :
+    DMeanMotion =-1*DMeanMotion
 #10 45-52    Second Time Derivative of Mean Motion divided by six (decimal point assumed)    00000-0
-DDMeanMotion = line1[45:52]
-DDMeanMotion =0;
+DDMeanMotion = float(line1[45:50])*10**(-5)
+if line1[44]=='-' :
+    DDMeanMotion =-1*DDMeanMotion
+if line1[50]=='-' :
+    DDMeanMotion =DDMeanMotion*10**(-float(line1[51]))
+if line1[50]=='+' :
+    DDMeanMotion =DDMeanMotion*10**(float(line1[51]))
 ##line1[45:52] = '00000-0'
 #11    54-61    BSTAR drag term (decimal point assumed) [11]    -11606-4
-BStar =line1[53:61]
-Bstar =  0.24125e-4
+#BStar =float(line1[53:61])
+# self.assertTrue(line1[53]=='-') 
+BStar = float(line1[54:59])
+if line1[53]=='-' :
+    BStar =-1*BStar
+if line1[59]=='-' :
+    BStar =BStar*10**(-float(line1[60]))
+if line1[59]=='+' :
+    BStar =BStar*10**(float(line1[60]))
 #12    63-63    The number 0 (originally this should have been "Ephemeris type")    0
 EphemerisT= line1[62] 
 #13    65-68    Element set number. Incremented when a new TLE is generated for this object.[11]    292
@@ -66,6 +84,9 @@ RevNo = float(line2[63:68])
 ### Print
 print('Satellite No. %s' % SatNo)
 print('Class No. %s' %ClassNo)
+print('International Designator (Last two digits of launch year) %s' %LaunchYear)
+print('International Designator (Launch number of the year) %s' %LaunchNumber)
+print('International Designator (piece of the launch) %s' %LaunchPiece)
 print('Epoch Year (last two digits of year) %s' %EpoachYr)
 print('Epoch (day of the year and fractional portion of the day) %s' %Epoach)
 print('First Time Derivative of the Mean Motion divided by two %s' %DMeanMotion)
