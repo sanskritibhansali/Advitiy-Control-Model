@@ -55,13 +55,14 @@ v_q0_BO = np.array([1.,0.,0.,0.])	#unit quaternion initial condition
 
 MODEL_STEP=0.1
 CONTROL_STEP = 2.0	#control cycle time period in second
+h = 0.001 #step size of integration in seconds
 
 INDUCTANCE = 68e-3	#Inductance of torquer in Henry
 RESISTANCE = 107.0	#Resistance of torquer	in Ohm
 PWM_AMPLITUDE = 3.3	#PWM amplitude in volt
 PWM_FREQUENCY = 1e3 #frequency of PWM signal 
 No_Turns=450        #No. of turns of torquer
-v_A_Torquer = np.array([0.0049,0.0049,0.0049])	#area vector perpendicular to x-axis in m^2
+v_A_Torquer = np.array([0.0049,0.0049,0.0049])	#area vector of torquers in m^2
 
 #Disturbance model constants
 SOLAR_PRESSURE = 4.56e-6	#in N/m^2

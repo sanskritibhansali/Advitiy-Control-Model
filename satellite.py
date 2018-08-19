@@ -124,4 +124,10 @@ class Satellite:
 	def getW(self):
 
 		return self.v_state[4:7]
+
+    def setAppTorque_b(self,v_app_torque_b): #set applied torque
+        self.v_app_torque_b=v_app_torque_b
+
+    def getAppTorque_b(self):                #get applied torque
+       return self.v_app_torque_b	
  

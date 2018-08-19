@@ -11,9 +11,11 @@ def x_dot_BI(sat,t,v_x):    #need m_INERTIA
         Output: Differential state vector
     '''
     #get torques acting about COM
-    v_torque_control_b = sat.getControl_b()     #Control torque
+    #v_torque_control_b = sat.getControl_b()     #Control torque
+    v_app_torque_b=sat.getAppTorque_b()
     v_torque_dist_b = sat.getDisturbance_b()    #Disturbance torque
-    v_torque_b = v_torque_control_b + v_torque_dist_b
+    #instead of applying control torque directly, here applied torque is given which comes after actuator modeling
+    v_torque_b = v_app_torque_b + v_torque_dist_b
     
     #get current state
     v_state = v_x.copy()
