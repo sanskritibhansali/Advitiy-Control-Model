@@ -8,12 +8,12 @@ from constants_1U import G,M_EARTH
 
 class TestOrbitData(unittest.TestCase):
 	#orbit = 1e3*np.genfromtxt('sgp_output.csv',delimiter = ',')
-	orbit = np.genfromtxt('sgp_output.csv', delimiter=",")
-	expected_RAAN = 155.9141	#in degrees
-	expected_inc = 98.1258	#in degrees
-	expected_eccentricity = 0.0032873	
-	expected_meanMotion = 14.62910114	#revolutions per day
-	expected_argPerigee = 333.2318	#in degrees
+	orbit = np.genfromtxt('sgp_output_4R.csv', delimiter=",")
+	expected_RAAN = 115.9689	#in degrees
+	expected_inc =  72.8435#in degrees
+	expected_eccentricity =0.0086731
+	expected_meanMotion = 16.05824518	#revolutions per day
+	expected_argPerigee = 52.6988	#in degrees
 	t2 = time.time()
 	
 	def testRAAN(self):
