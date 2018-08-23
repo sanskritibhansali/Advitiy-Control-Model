@@ -64,7 +64,7 @@ def quatDerBO(v_q,v_w):   #q transforms orbit frame vector to body frame
 	return v_q_dot
 
 def rotm2quat(m_A): #returns a quaternion whose scalar part is positive to keep angle between -180 to +180 deg.
-
+					#formula from pg 97 of textbook by Junkins
 	q4 = 1 + np.trace(m_A)
 	q1 = 1 + m_A[0,0] - m_A[1,1] - m_A[2,2]
 	q2 = 1 - m_A[0,0] + m_A[1,1] - m_A[2,2]
@@ -73,7 +73,7 @@ def rotm2quat(m_A): #returns a quaternion whose scalar part is positive to keep 
 	if(qm==q4):
 		q4 = math.sqrt(q4)/2
 		q1 = (m_A[1,2] - m_A[2,1])/(4*q4)
-		q2 = (m_A[0,2] - m_A[2,0])/(4*q4)
+		q2 = (m_A[2,0] - m_A[0,2])/(4*q4)
 		q3 = (m_A[0,1] - m_A[1,0])/(4*q4)
 
 	elif(qm==q1):
@@ -96,7 +96,7 @@ def rotm2quat(m_A): #returns a quaternion whose scalar part is positive to keep 
 
 	v_q = np.array([q1,q2,q3,q4])
 	v_q = v_q/np.linalg.norm(v_q)
-	if (fs.sgn(v_q[4])==-1):
+	if (fs.sgn(v_q[3])==-1):
 		v_q = -1 * v_q
 	return v_q
 
