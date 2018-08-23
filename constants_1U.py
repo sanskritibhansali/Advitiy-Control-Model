@@ -10,10 +10,10 @@ G = 6.67408e-11; #universal gravitational constant, SI
 M_EARTH = 5.972e24; #mass of earth, kg
 R_EARTH = 6371.0e3; #radius of earth, m
 
-AU = 149597870610.0 #Distance between sun and earth in meters
-R_SUN = 695500000.0 #Radius of the Sun in meters
+AU = 149597870700.0 #Distance between sun and earth in meters
+R_SUN = 6957e5 #Radius of the Sun in meters
 
-#------------date format yyyy,mm,dd
+#------------date format yyyy,mm,dd (TLE taken from n2yo.com on 3rd April)
 LINE1 = ('1 41783U 16059A   18093.17383152  .00000069  00000-0  22905-4 0  9992') #Insert TLE Here
 LINE2 = ('2 41783  98.1258 155.9141 0032873 333.2318  26.7186 14.62910114 80995') 
 Incl = LINE2[8:16]
@@ -27,16 +27,16 @@ EPOCH = dt.datetime(2018, 4, 3, 12, 50, 19)	#date of launch t=0
 EQUINOX = dt.datetime(2018, 3, 20, 13, 5, 00)	#day of equinox
 STEPRUT = 1.002738 #sidereal time = stperut * universal time
 
-#-- --------Moment of inertia matrix in kgm^2 for 1U satellite (assumed to be uniform with small off-diagonal)
-MASS_SAT = 0.880	#in kg
+#-- --------Moment of inertia matrix in kgm^2 for 1U satellite (assumed to be uniform with small off-diagonal) (wrt center of mass)
+MASS_SAT = 0.79211825320	#in kg
 Lx = 0.1 #in meters
 
-Ixx = 0.00152529
-Iyy = 0.00145111
-Izz = 0.001476
-Ixy = 0.00000437
-Iyz = - 0.00000408
-Ixz = 0.00000118
+Ixx = 0.00181371576300752 
+Iyy = 0.00297976644883242
+Izz = 0.00268845576255387
+Ixy = -0.00012403661702993 
+Iyz = 0.00000427535251995
+Ixz = -0.00000469686268379
 
 m_INERTIA = np.array([[Ixx, Ixy, Ixz], [Ixy, Iyy, Iyz], [Ixz, Iyz, Izz]])	#actual inertia
 #m_INERTIA = 0.001*np.array([[1.0,0.,0.],[0.,1.,0.],[0.,0.,1.]])	#identity inertia
@@ -66,7 +66,7 @@ v_A_Torquer = np.array([0.0049,0.0049,0.0049])	#area vector perpendicular to x-a
 #Disturbance model constants
 SOLAR_PRESSURE = 4.56e-6	#in N/m^2
 REFLECTIVITY = 0.2
-r_COG_2_COM_b = np.array([1.23e-3,-1.23e-3,-2.44e-3])
+r_COG_2_COM_b = np.array([-0.69105608e-3,-0.69173140e-3,-2.37203930e-3])
 AERO_DRAG = 2.2
 RHO = 0.218e-12
 
