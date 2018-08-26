@@ -9,6 +9,9 @@ W_EARTH = 7.2921150e-5; # rotation velocity of the earth (rad per second)
 G = 6.67408e-11; #universal gravitational constant, SI
 M_EARTH = 5.972e24; #mass of earth, kg
 R_EARTH = 6371.0e3; #radius of earth, m
+ALTITUDE = 700e3 # (in m) assunming height of satellite 700 km
+r = R_EARTH + ALTITUDE #Distance of satellite from center of earth m
+v_w_IO_o = np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.]) #angular velocity of orbit frame wrt inertial frame in orbit frame
 
 AU = 149597870700.0 #Distance between sun and earth in meters
 R_SUN = 6957e5 #Radius of the Sun in meters
@@ -30,13 +33,12 @@ STEPRUT = 1.002738 #sidereal time = stperut * universal time
 #-- --------Moment of inertia matrix in kgm^2 for 1U satellite (assumed to be uniform with small off-diagonal) (wrt center of mass)
 MASS_SAT = 0.79211825320	#in kg
 Lx = 0.1 #in meters
-
-Ixx = 0.00181371576300752 
-Iyy = 0.00297976644883242
-Izz = 0.00268845576255387
-Ixy = -0.00012403661702993 
-Iyz = 0.00000427535251995
-Ixz = -0.00000469686268379
+Ixx = 0.00152529
+Iyy = 0.00145111
+Izz = 0.001476
+Ixy = 0.00000437
+Iyz = - 0.00000408
+Ixz = 0.00000118
 
 m_INERTIA = np.array([[Ixx, Ixy, Ixz], [Ixy, Iyy, Iyz], [Ixz, Iyz, Izz]])	#actual inertia
 #m_INERTIA = 0.001*np.array([[1.0,0.,0.],[0.,1.,0.],[0.,0.,1.]])	#identity inertia
