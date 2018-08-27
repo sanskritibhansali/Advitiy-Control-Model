@@ -131,4 +131,10 @@ class Satellite:
 		v_q_BO = self.v_state[0:4]
 		v_w_BI_b = fs.wBOb2wBIb(v_w_BO_b,v_q_BO,v_w_IO_o)
 		return self.v_w_BI_b
+
+    def setAppTorque_b(self,v_app_torque_b): #set applied torque
+        self.v_app_torque_b=v_app_torque_b
+
+    def getAppTorque_b(self):                #get applied torque
+       return self.v_app_torque_b	
  
