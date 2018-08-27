@@ -36,19 +36,24 @@ class Satellite:
 
 	def setQ(self,v_q):	#set exact quaternion
 
-		self.v_state[0:4] = v_q.copy()
+		self.v_q_BI=v_q.copy()
 
 	def getQ(self):	#get exact quaternion
+		return self.v_q_BI
+
+	def getQ_BO(self):	#get exact quaternion
 		return self.v_state[0:4]
 
-	def setqBO(self,v_q):   #set quaternion from body to orbit frame
-		self.v_q_BO = v_q.copy()
-	def getqBO(self):   #get quaternion from body to orbit frame
-		return self.v_q_BO[0:4]
+	def setQ_BO(self,v_w):	#set exact quaternion
 
-	def setW(self,v_omega):	#set angular rate of body wrt ecif in body frame
+		self.v_state[0:4]=v_w.copy()
 
-		self.v_state[4:7] = v_omega.copy()
+	def setW_BO_b(self,v_q):	#set exact quaternion
+
+		self.v_state[4:7]=v_q.copy()
+
+	def getW_BO_b(self):	#get exact quaternion
+		return self.v_state[4:7]
 
 	def setTime(self,y):	#set time
 		self.time = y
@@ -96,7 +101,7 @@ class Satellite:
 	def setMag_b_m_c(self,v_mag_b_m):  #set current mag measurement in body
 		self.mag_b_m_c = v_mag_b_m.copy()
 	def setMag_b_m_p(self,v_mag_b_m):	#set previous mag measurement in body
-		self.mag_b_m_p
+		self.mag_b_m_p = v_mag_b_m.copy()
     
 	def getMag_b_m_c(self):	#return mag measurement in body
 		return self.mag_b_m_c
@@ -121,9 +126,11 @@ class Satellite:
 	def getLight(self):
 		return self.light
 
-	def getW(self):
-
-		return self.v_state[4:7]
+	def getW_BI_b(self):
+		v_w_BO_b = self.v_state[4:7]
+		v_q_BO = self.v_state[0:4]
+		v_w_BI_b = fs.wBOb2wBIb(v_w_BO_b,v_q_BO,v_w_IO_o)
+		return self.v_w_BI_b
 
     def setAppTorque_b(self,v_app_torque_b): #set applied torque
         self.v_app_torque_b=v_app_torque_b
