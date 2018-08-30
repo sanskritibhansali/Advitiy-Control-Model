@@ -34,8 +34,8 @@ class Satellite:
 
         return self.v_vel_i
 
-    def setQ(self,v_q):    #set exact quaternion
-
+    def setQ(self,v_state_q):    #set exact quaternion
+        v_q=fs.qBO2qBI(v_state_q ,self.v_pos_i ,self.v_vel_i)
         self.v_q_BI=v_q.copy()
 
     def getQ(self):    #get exact quaternion
@@ -89,9 +89,11 @@ class Satellite:
         v_sun_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_sun_i)
         return    v_sun_o
 
-    def getMag_i(self):    #return mag in orbit
-        #v_mag_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_mag_i)
-        return    self.v_mag_i
+# =============================================================================
+#     def getMag_i(self):    #return mag in orbit
+#         #v_mag_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_mag_i)
+#         return    self.v_mag_i
+# =============================================================================
 
     def setSun_b_m(self,v_sv_b_m):    #set sunsensor measurement in body
         self.v_sun_b_m = v_sv_b_m.copy()

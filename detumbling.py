@@ -54,6 +54,7 @@ print (N ,'Simulation for ' ,MODEL_STEP*(N-1),'seconds')
 #initialize empty matrices
 v_state = np.zeros((N,7))
 v_q_BO = np.zeros((N,4))
+v_q_BI=np.zeros((N,4))
 v_w_BOB = np.zeros((N,3))
 euler = np.zeros((N,3))
 torque_dist = np.zeros((N,3))
@@ -65,6 +66,7 @@ r=np.linalg.norm(m_sgp_output_i[0,1:4])
 v_w0_BIB = -np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.])
 v_state[0,:] = np.hstack((v_q0_BI,v_w0_BIB))
 v_q_BO[0,:] = v_q0_BO
+v_q_BI[0,:] = v_q0_BI
 v_w_BOB[0,:] = fs.wBIb2wBOb(v_w0_BIB,v_q_BO[0,:],(-v_w0_BIB))
 euler[0,:] = qnv.quat2euler(v_q_BO[0,:])
 
@@ -89,25 +91,28 @@ for  i in range(0,N-1):
     #v_magnetic_field_b_p=sen
     # obtain these data from magmeter modelling
     #print (m_magnetic_field_i[i,1:4])
+    Advitiy.setQ(v_state[i,0:4])
+    v_q_BI[i,:]=Advitiy.getQ()
     if i==0:
-        v_magnetic_field_b_p=qnv.quatRotate(v_state[0,0:4],m_magnetic_field_i[i,1:4])
+        v_magnetic_field_b_p=qnv.quatRotate(v_q_BI[0,:],m_magnetic_field_i[i,1:4])
+        v_magnetic_field_b_c=v_magnetic_field_b_p.copy()
     else:
-        v_magnetic_field_b_p=qnv.quatRotate(v_state[i-1,0:4],m_magnetic_field_i[i,1:4])
-    v_magnetic_field_b_c=qnv.quatRotate(Advitiy.getQ(),m_magnetic_field_i[i+1,1:4])
+        v_magnetic_field_b_p=qnv.quatRotate(v_q_BI[i-1,0:4],m_magnetic_field_i[i-1,1:4])
+    v_magnetic_field_b_c=qnv.quatRotate(v_q_BI[i,0:4],m_magnetic_field_i[i,1:4])
     Advitiy.setMag_b_m_p(v_magnetic_field_b_p)         
     Advitiy.setMag_b_m_c(v_magnetic_field_b_c)
-    Advitiy.setMag_i(m_magnetic_field_i[i+1,1:4])
+    Advitiy.setMag_i(m_magnetic_field_i[i,1:4])
 
     v_torque_gg_b = dist.ggTorqueb(Advitiy).copy()
     v_torque_aero_b = dist.aeroTorqueb(Advitiy).copy()
     v_torque_solar_b = dist.solarTorqueb(Advitiy).copy()
     v_torque_total_b =(v_torque_gg_b + v_torque_aero_b + v_torque_solar_b)
-    Advitiy.setDisturbance_i(v_torque_total_b)
+    Advitiy.setDisturbance_b(v_torque_total_b)
     torque_dist[i,:] = v_torque_total_b.copy()
     
     if math.fmod(i,20) == 0:
         v_magMoment = detcon.magMoment(Advitiy)
-    v_magnetic_field_b = qnv.quatRotate(Advitiy.getQ(),Advitiy.getMag_i()) * 10**(-9)
+    v_magnetic_field_b = qnv.quatRotate(v_q_BI[i,0:4],Advitiy.getMag_i()) * 10**(-9)
     v_control_torque_b = np.cross(v_magMoment,v_magnetic_field_b)
     Advitiy.setControl_b(v_control_torque_b)
 
@@ -135,7 +140,7 @@ for  i in range(0,N-1):
     v_state[i+1,:] = v_state_next.copy()
     
     #Calculate observable quantities
-    v_q_BO[i+1,:] = fs.qBI2qBO(v_state_next[0:4],m_sgp_output_i[i+1,1:4],m_sgp_output_i[i+1,4:7])
+    v_q_BO[i+1,:] = v_state_next[0:4]
     r=np.linalg.norm(m_sgp_output_i[i+1,1:4])
     v_w0_BIB = -np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.])
     v_w_BOB[i+1,:] = fs.wBIb2wBOb(v_state_next[4:7],v_q_BO[i+1,:],(-v_w0_BIB))
