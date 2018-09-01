@@ -80,7 +80,7 @@ for  i in range(0,N-1):
     
     if math.fmod(i,int(N/100)) == 0:
         print (int(100*i/N)) 
-    if i==5000  : break
+    if i==600  : break
     #Set satellite parameters
     Advitiy.setLight(m_light_output[i,1])
     Advitiy.setState(v_state[i,:])
@@ -119,13 +119,16 @@ for  i in range(0,N-1):
     v_state_next = np.zeros((1,7))
 
     if i%20==0:
-        voltage=ctrlTorqueToVoltage(Advitiy)
-#        v_duty_cycle=voltage/PWM_AMPLITUDE
-        v_duty_cycle=np.array([0.5,0.5,0.5])
-        m_current_list = act.getCurrentList(h,v_duty_cycle)  #for getting  PWM current list for a CONTROL_STEP
 # =============================================================================
-#         m_current_list=I(voltage)    # for getting DC current list for a CONTROL_STEP
+#         voltage=ctrlTorqueToVoltage(Advitiy)
+#         v_duty_cycle=voltage/PWM_AMPLITUDE
 # =============================================================================
+# =============================================================================
+#         v_duty_cycle=np.array([0.5,0.5,0.5])
+#         m_current_list = act.getCurrentList(h,v_duty_cycle)  #for getting  PWM current list for a CONTROL_STEP
+# =============================================================================
+        voltage=3.3*0.5
+        m_current_list=I(voltage)    # for getting DC current list for a CONTROL_STEP
         v_app_torque_b=currentToTorque(m_current_list,Advitiy)
         for k in range(0,v_app_torque_b.shape[0]):
             Advitiy.setAppTorque_b(v_app_torque_b[k].copy())
@@ -145,17 +148,25 @@ for  i in range(0,N-1):
     v_w0_BIB = -np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.])
     v_w_BOB[i+1,:] = fs.wBIb2wBOb(v_state_next[4:7],v_q_BO[i+1,:],(-v_w0_BIB))
     euler[i+1,:] = qnv.quat2euler(v_q_BO[i+1,:])
-
+print 'simulation for '+str(i/10)+' sec is over'
 #save the data files
-os.chdir('Logs-Detumbling/')
-os.mkdir('trial')
-os.chdir('trial')
-np.savetxt('position.csv',m_sgp_output_i[init:end+1,1:4], delimiter=",")
-np.savetxt('velocity.csv',m_sgp_output_i[init:end+1,4:7], delimiter=",")
-np.savetxt('time.csv',m_sgp_output_i[init:end+1,0] - t0, delimiter=",")
-np.savetxt('w_BOB.csv',v_w_BOB, delimiter=",")
-np.savetxt('q_BO.csv',v_q_BO, delimiter=",")
-np.savetxt('state.csv',v_state, delimiter=",")
-np.savetxt('euler.csv',euler, delimiter=",")
-#np.savetxt('disturbance.csv',torque_dist, delimiter=",")
-np.savetxt('Moment of Inertia', m_INERTIA, delimiter=",")
+np.savetxt('Logs/w_BOB.csv',v_w_BOB[0:i,:],delimiter=',')
+np.savetxt('Logs/euler.csv',euler, delimiter=",")
+np.savetxt('Logs/disturbance.csv',torque_dist, delimiter=",")
+np.savetxt('Logs/v_q_BI.csv',v_q_BI[0:i,:],delimiter=',')
+np.savetxt('Logs/state.csv',v_state, delimiter=",")
+np.savetxt('Logs/disturbance.csv',torque_dist, delimiter=",")
+# =============================================================================
+# os.chdir('Logs-Detumbling/')
+# os.mkdir('trial')
+# os.chdir('trial')
+# np.savetxt('position.csv',m_sgp_output_i[init:end+1,1:4], delimiter=",")
+# np.savetxt('velocity.csv',m_sgp_output_i[init:end+1,4:7], delimiter=",")
+# np.savetxt('time.csv',m_sgp_output_i[init:end+1,0] - t0, delimiter=",")
+# np.savetxt('w_BOB.csv',v_w_BOB, delimiter=",")
+# np.savetxt('q_BO.csv',v_q_BO, delimiter=",")
+# np.savetxt('state.csv',v_state, delimiter=",")
+# np.savetxt('euler.csv',euler, delimiter=",")
+# #np.savetxt('disturbance.csv',torque_dist, delimiter=",")
+# np.savetxt('Moment of Inertia', m_INERTIA, delimiter=",")
+# =============================================================================
