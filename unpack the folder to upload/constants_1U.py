@@ -18,8 +18,14 @@ R_SUN = 695500000.0 #Radius of the Sun in meters
 #------------date format yyyy,mm,dd
 LINE1 = ('1 41783U 16059A   18093.17383152  .00000069  00000-0  22905-4 0  9992') #Insert TLE Here
 LINE2 = ('2 41783  98.1258 155.9141 0032873 333.2318  26.7186 14.62910114 80995') 
+# below is spacetrack .. just for testing
+LINE1 = ('1 88888U 16059A   80275.98708465 +.00073094 +13844-3 +66816-4 0  9998') #Insert TLE Here
+LINE2 = ('2 88888  72.8435 115.9689 0086731  52.6988 110.5714 16.05824518   105') 
 
-####ADDED following block ......
+### add TT and dT in constants
+TT = 1440#100.0 # total time in minutes   ##add in constant
+dT = np.linspace(0.0,TT*60.0,(TT*60*10 + 1)) #np.linspace(0.0,TT*60.0,(100*60*10 + 1)) ## dT is in seconds. total 100 minutes here. 10 is for 1/timestep
+####ADDED following block ......these data based on spacetrack report3 page 81
 MeanMo = 16.05824518#14.62910114  #16.05824518
 Eccen = 0.0086731#0.0032873     # 0.0086731
 Incl_deg =72.8435 #98.1258  #72.8435
