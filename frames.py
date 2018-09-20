@@ -102,7 +102,7 @@ def qBI2qBO(v_q_BI,v_pos_i,v_vel_i):
 				  [ v_q_BI[2], -v_q_BI[3], v_q_BI[0], v_q_BI[1]],
 				  [ v_q_BI[3], v_q_BI[2], -v_q_BI[1], v_q_BI[0]]])
 
-	v_q_BO = np.dot(m_G1,v_q_IO)
+	v_q_BO = np.dot(m_G1,v_q_IO) 
 
 	if v_q_BO[0] < 0.:
 		v_q_BO = -1.*v_q_BO.copy()
