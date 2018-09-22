@@ -41,18 +41,18 @@ class Satellite:
 	def getQ(self):	#get exact quaternion
 		return self.v_q_BI
 
-	def getQ_BO(self):	#get exact quaternion
+	def getQ_BO(self):	#get error quaternion
 		return self.v_state[0:4]
 
-	def setQ_BO(self,v_w):	#set exact quaternion
+	def setQ_BO(self,v_w):	#set error quaternion
 
 		self.v_state[0:4]=v_w.copy()
 
-	def setW_BO_b(self,v_q):	#set exact quaternion
+	def setW_BO_b(self,v_q):	#set angular velocity of Body frame wrt orbit frame in body frame
 
 		self.v_state[4:7]=v_q.copy()
 
-	def getW_BO_b(self):	#get exact quaternion
+	def getW_BO_b(self):	#get angular velocity of Body frame wrt orbit frame in body frame
 		return self.v_state[4:7]
 
 	def setTime(self,y):	#set time
