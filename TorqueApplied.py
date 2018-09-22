@@ -41,7 +41,7 @@ def currentToTorque(current_list,sat):
     '''
         This function calculates the torques acting on satellite to a corresponding current in the torquer.
         Input: array of currents with first row as time and next three as currents, satellite
-        Output: The torque acting on the satellite due to current in torquer(an array).
+        Output: The torque acting on the satellite due to current in torquer.
     '''
     v_mu_app = No_Turns*np.multiply(v_A_Torquer,current_list[:,1:])
     v_magnetic_field_i=sat.getMag_i()
