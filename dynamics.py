@@ -12,12 +12,9 @@ def x_dot_BO(sat,t,v_x):    #need m_INERTIA (abot center of mass)
         Output: Differential state vector
     '''
     #get torques acting about COM
-# =============================================================================
-#     v_torque_control_b = sat.getControl_b()     #Control torque
-# =============================================================================
-    v_app_torque_b=sat.getAppTorque_b() #this is the torque that is actually applied on satellite;this comes from torquer modelling
+    v_torque_control_b = sat.getControl_b()     #Control torque
     v_torque_dist_b = sat.getDisturbance_b()    #Disturbance torque
-    v_torque_b = v_app_torque_b + v_torque_dist_b
+    v_torque_b = v_torque_control_b + v_torque_dist_b
     
     #get current state
     v_q_BO = v_x[0:4]  #unit quaternion rotating from ecif to body 
