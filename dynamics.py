@@ -17,8 +17,8 @@ def x_dot_BO(sat,t,v_x):    #need m_INERTIA (abot center of mass)
     v_torque_b = v_torque_control_b + v_torque_dist_b
     
     #get current state
-    v_q_BO = v_x[0:4]  #unit quaternion rotating from ecif to body 
-    v_w_BO_b = v_x[4:7].copy()  #angular velocity of body frame wrt ecif in body frame
+    v_q_BO = v_x[0:4]  #unit quaternion rotating a vector from orbit frame to body frame 
+    v_w_BO_b = v_x[4:7].copy()  #angular velocity of body frame wrt orbit frame in body frame
     R = quat2rotm(v_q_BO)
     #Kinematic equation
     v_q_BO_dot = quatDerBO(v_q_BO,v_w_BO_b)   
