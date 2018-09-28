@@ -53,7 +53,7 @@ v_Ay = np.array([0.,0.01,0.])	#area vector perpendicular to y-axis in m^2
 v_Az = np.array([0.,0.,0.01])	#area vector perpendicular to z-axis in m^2
 
 #------------Initial conditions
-v_q0_BO = np.array([1.,0.,0.,0.])	#unit quaternion initial condition
+v_q0_BO = np.array([1.,0.,0.,0.])	#unit quaternion initial condition (qBO means quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame)
 
 MODEL_STEP=0.1
 CONTROL_STEP = 2.0	#control cycle time period in second
