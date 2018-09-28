@@ -34,11 +34,11 @@ class Satellite:
 
 		return self.v_vel_i
 
-	def setQ_BI(self,v_q):	#set quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame
+	def setQ_BI(self,v_q):	#set quaternion whose rotation matrix transmforms vector in inertial frame to vector in body frame
 		
 		self.v_q_BI=v_q.copy()
 
-	def getQ_BI(self):	#get quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame
+	def getQ_BI(self):	#get quaternion whose rotation matrix transmforms vector in inertial frame to vector in body frame
 		return self.v_q_BI
 
 	def getQ_BO(self):	#get quaternion whose rotation matrix transmforms vector in orbit frame to vector in body frame
