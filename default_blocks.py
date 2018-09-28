@@ -34,3 +34,5 @@ def disturbance(sat):
 	return(np.zeros(3))
 
 #Default models of estimator: (by sanskriti on monday)
+def estimator(sat):
+	return(sat.getQ_BO())
