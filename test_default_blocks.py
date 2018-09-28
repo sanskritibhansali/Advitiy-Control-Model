@@ -3,34 +3,43 @@ import unittest
 import satellite
 import frames 
 import default_blocks as defblock
-from ddt import ddt, data, unpack
+from ddt import ddt, data, unpack, file_data
 
 @ddt
 class TestDefaultBlocks(unittest.TestCase):
-	def sunsensor(sat,v_sv_i):
-	v_sv_b = qnv.quatRotate(sat.getQ(),v_sv_i)
-	v_sv_o = qnv.quatRotate(sat.getQ_BO(),v_sv_i)
-	return v_sv_b, v_sv_o;
 
 	@file_data("test-data/test_defaultsunsensor.json")
 	@unpack
-	def test_sunsensor(self,value): #identitiy qBI
+	def test_sunsensor(self,value): 
 		qBI = np.asarray(value[0])
 		v_sv_i = np.asarray(value[1])
 
 		v_pos_i = np.array([1e6,-2.03,-3.0])
 		v_vel_i = np.array([2.0e3,2.8,-73.2])
-		qBO = qBI2qBO(v_q_BI,v_pos_i,v_vel_i)
+		qBO = frames.qBI2qBO(qBI,v_pos_i,v_vel_i)
 		state = np.hstack((qBO,np.zeros(3)))
 		mySat = satellite.Satellite(state,12.0)
+		mySat.setQ_BI(qBI)
 		result = defblock.sunsensor(mySat,v_sv_i)
 		v_expected = value[2],value[3];
-
 		self.assertTrue(np.allclose(result,v_expected))
 	
-	'''
-	def test_sunsensor(self): #identitiy qBO
+	@file_data("test-data/test_defaultsunsensor.json")
+	@unpack
+	def test_magmeter(self,value): 
+		qBI = np.asarray(value[0])
+		v_sv_i = np.asarray(value[1])
 
+		v_pos_i = np.array([1e6,-2.03,-3.0])
+		v_vel_i = np.array([2.0e3,2.8,-73.2])
+		qBO = frames.qBI2qBO(qBI,v_pos_i,v_vel_i)
+		state = np.hstack((qBO,np.zeros(3)))
+		mySat = satellite.Satellite(state,12.0)
+		mySat.setQ_BI(qBI)
+		result = defblock.magmeter(mySat,v_sv_i)
+		v_expected = value[2],value[3];
+		self.assertTrue(np.allclose(result,v_expected))
+	
 	def test_gyroscope(self):
 		v_w_BI_b = np.array((-3.9999, 4.8575, 0))
 		self.assertTrue(np.allclose(defblock.gyroscope(v_w_BI_b),v_w_BI_b))
@@ -66,6 +75,12 @@ class TestDefaultBlocks(unittest.TestCase):
 		state = np.hstack((qBO,np.array([0.10050588,-0.05026119,-0.3014887])))
 		mySat = satellite.Satellite(state,128.05)
 		self.assertTrue(np.allclose(defblock.disturbance(mySat),np.zeros(3)))
-		'''
+	
+	def test_estimator(self):
+		qBO = np.array([.414,0.5,-0.5,0.])
+		state = np.hstack((qBO,np.array([0.10050588,-0.05026119,-0.3014887])))
+		mySat = satellite.Satellite(state,128.05)
+		self.assertTrue(np.allclose(defblock.estimator(mySat),qBO))
+	
 if __name__=='__main__':
 	unittest.main(verbosity=2)
