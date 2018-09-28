@@ -34,18 +34,17 @@ class Satellite:
 
 		return self.v_vel_i
 
-	def setQ_BI(self,v_q):	#set exact quaternion from inertial frame to body frame
-
+	def setQ_BI(self,v_q):	#set quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame
+		
 		self.v_q_BI=v_q.copy()
 
-	def getQ_BI(self):	#get exact quaternion from inertial frame to body frame
+	def getQ_BI(self):	#get quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame
 		return self.v_q_BI
 
-	def getQ_BO(self):	#get error quaternion from orbit frame to body frame
+	def getQ_BO(self):	#get quaternion whose rotation matrix transmforms vector in orbit frame to vector in body frame
 		return self.v_state[0:4]
 
-	def setQ_BO(self,v_q):	#set error quaternion from orbit frame to body frame
-
+	def setQ_BO(self,v_q):	#set quaternion whose rotation matrix transmforms vector in orbit frame to vector in body frame
 		self.v_state[0:4]=v_q.copy()
 
 	def setW_BO_b(self,v_w):	#set exact angular velocity of body with respect to orbit expressed in body frame
