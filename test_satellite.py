@@ -316,6 +316,14 @@ if (Sat4.getLight()==1):
 else:
 	print ("setLight and getLight incorrect")
 
+Magmoment=np.array([-0.02,0.0,0.05])
+Sat4.setMagmomentRequired_b(Magmoment)
+tg=Sat4.getMagmomentRequired_b()
+if (tg==Magmoment).all():
+	print ("setMagmomentRequired_b and getMagmomentRequired_b correct")
+else:
+	print ("setMagmomentRequired_b or getMagmomentRequired_b incorrect")
+
 Torque=np.array([-0.2,-0.03,0.5])
 Sat4.setAppTorque_b(Torque)
 tg=Sat4.getAppTorque_b()
@@ -323,4 +331,12 @@ if (tg==Torque).all():
 	print ("setAppTorque_b and getAppTorque_b correct")
 else:
 	print ("setAppTorque_b and getAppTorque_b incorrect")
+
+v_gyro_bias = np.array([-0.00001,0.0,0.3253])
+Sat4.setGyroVarBias(v_gyro_bias)
+bias=getGyroVarBias()
+if (bias==v_gyro_bias).all():
+	print ("setGyroVarBias and getGyroVarBias correct")
+else:
+	print ("setGyroVarBias and getGyroVarBias incorrect")
 

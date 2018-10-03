@@ -34,21 +34,20 @@ class Satellite:
 
 		return self.v_vel_i
 
-	def setQ_BI(self,v_q):	#set quaternion whose rotation matrix transmforms vector in inertial frame to vector in body frame
-		
+	def setQ_BI(self,v_q):	#set exact quaternion from inertial frame to body frame
+
 		self.v_q_BI=v_q.copy()
 
-	def getQ_BI(self):	#get quaternion whose rotation matrix transmforms vector in inertial frame to vector in body frame
+	def getQ_BI(self):	#get exact quaternion from inertial frame to body frame
 		return self.v_q_BI
 
-	def getQ_BO(self):	#get quaternion whose rotation matrix transmforms vector in orbit frame to vector in body frame
-		return self.v_state[0:4]
-
-	def setQ_BO(self,v_q):	#set quaternion whose rotation matrix transmforms vector in orbit frame to vector in body frame
+	def setQ_BO(self,v_q):	#set error quaternion from orbit frame to body frame
 		self.v_state[0:4]=v_q.copy()
 
+	def getQ_BO(self):	#get error quaternion from orbit frame to body frame
+		return self.v_state[0:4]
+	
 	def setW_BO_b(self,v_w):	#set exact angular velocity of body with respect to orbit expressed in body frame
-
 		self.v_state[4:7]=v_w.copy()
 
 	def getW_BO_b(self):	#get exact angular velocity of body with respect to orbit expressed in body frame
@@ -94,20 +93,17 @@ class Satellite:
 
 	def setSun_i(self,v_sv_i):	#set sun vector in eci
 		self.v_sun_i = v_sv_i.copy()	
-
-	def setMag_i(self,v_mag_i):	#set mag in eci
-		self.v_mag_i = v_mag_i.copy()
-
 	def getSun_i(self):	#return sun in eci
 		return self.v_sun_i
 
-	def getMag_i(self):	#return mag in eci
-		return self.v_mag_i
-
+	def setMag_i(self,v_mag_i):	#set mag in eci
+		self.v_mag_i = v_mag_i.copy()		
 	def getSun_o(self):	#get sun vector in orbit
 		v_sun_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_sun_i)
 		return	v_sun_o
-
+	
+	def getMag_i(self):	#return mag in eci
+		return self.v_mag_i
 	def getMag_o(self):	#return mag in orbit
 		v_mag_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_mag_i)
 		return	v_mag_o
@@ -118,12 +114,12 @@ class Satellite:
 		return self.v_sun_b_m
 	
 	def setMag_b_m_c(self,v_mag_b_m):  #set current mag measurement in body
-		self.mag_b_m_c = v_mag_b_m.copy()
-	def setMag_b_m_p(self,v_mag_b_m):	#set previous mag measurement in body
-		self.mag_b_m_p = v_mag_b_m.copy()
-	
+		self.mag_b_m_c = v_mag_b_m.copy()		
 	def getMag_b_m_c(self):	#return mag measurement in body
 		return self.mag_b_m_c
+
+	def setMag_b_m_p(self,v_mag_b_m):	#set previous mag measurement in body
+		self.mag_b_m_p = v_mag_b_m.copy()
 	def getMag_b_m_p(self):	#return mag measurement in body
 		return self.mag_b_m_p
 
@@ -144,9 +140,20 @@ class Satellite:
 
 	def getLight(self):
 		return self.light
+	
+	def setMagmomentRequired_b(self,v_app_torque_b): #set magnetic moment required by controller in body frame
+		self.v_req_Magmoment_b=v_req_Magmoment_b
+
+	def getMagmomentRequired_b(self):                #get magnetic moment required by controller in body frame
+	    return self.v_req_Magmoment_b	
 
 	def setAppTorque_b(self,v_app_torque_b): #set applied torque
 		self.v_app_torque_b=v_app_torque_b
 
 	def getAppTorque_b(self):                #get applied torque
-	   return self.v_app_torque_b	
+	    return self.v_app_torque_b	
+
+	def setGyroVarBias(self, v_gyro_bias):  #set bias of gyroscope
+		self.GyroVarBias = v_gyro_bias
+	def getGyroVarBias(self):  #returns bias of gyroscope
+		return self.GyroVarBias
