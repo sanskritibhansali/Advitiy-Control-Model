@@ -22,7 +22,7 @@ def rk4Quaternion(sat,f,h): #This is Runge Kutta-4 solver for ordinary different
 
 	#second step of rk4 routine
 	k2 = h*f(sat)
-	v_state_error_2 = v_state_error_1+0.5*k2
+	v_state_error_2 = v_state_error_0+0.5*k2
 	v_state_error_2[0:4] = v_state_error_2[0:4].copy()/np.linalg.norm(v_state_error_2[0:4].copy()) 	#Normalize to obtain unit quaternion
 	
 	if v_state_error_2[3] < 0. :   #scalar part should not be negative 
@@ -31,7 +31,7 @@ def rk4Quaternion(sat,f,h): #This is Runge Kutta-4 solver for ordinary different
 
 	#third step of rk4 routine
 	k3 = h*f(sat)
-	v_state_error_3 = v_state_error_2+k3
+	v_state_error_3 = v_state_error_0+k3
 	v_state_error_3[0:4] = v_state_error_3[0:4].copy()/np.linalg.norm(v_state_error_3[0:4].copy()) 	#Normalize to obtain unit quaternion
 	
 	if v_state_error_3[3] < 0. :   #scalar part should not be negative 
