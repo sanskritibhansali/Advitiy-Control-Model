@@ -141,7 +141,7 @@ class Satellite:
 	def getLight(self):
 		return self.light
 	
-	def setMagmomentRequired_b(self,v_app_torque_b): #set magnetic moment required by controller in body frame
+	def setMagmomentRequired_b(self,v_req_Magmoment_b): #set magnetic moment required by controller in body frame
 		self.v_req_Magmoment_b=v_req_Magmoment_b
 
 	def getMagmomentRequired_b(self):                #get magnetic moment required by controller in body frame

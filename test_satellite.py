@@ -334,7 +334,7 @@ else:
 
 v_gyro_bias = np.array([-0.00001,0.0,0.3253])
 Sat4.setGyroVarBias(v_gyro_bias)
-bias=getGyroVarBias()
+bias=Sat4.getGyroVarBias()
 if (bias==v_gyro_bias).all():
 	print ("setGyroVarBias and getGyroVarBias correct")
 else:
