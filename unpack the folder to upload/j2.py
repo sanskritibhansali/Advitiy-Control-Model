@@ -4,7 +4,6 @@ import constants_1U as C1U
 
 Re = C1U.R_EARTH
 GM = C1U.G* C1U.M_EARTH
-J2 = 1.08263e-3; ### need to put this in constants
 h= C1U.MODEL_STEP ## timestep
 
 #RV_0 and dT are the input to the j2.py (states- position and velocity in ECI frame in m and m/s)
