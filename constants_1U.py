@@ -12,7 +12,8 @@ R_EARTH = 6371.0e3; #radius of earth, m
 ALTITUDE = 700e3 # (in m) assunming height of satellite 700 km
 r = R_EARTH + ALTITUDE #Distance of satellite from center of earth m
 v_w_IO_o = np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.]) #angular velocity of orbit frame wrt inertial frame in orbit frame
-
+J2 = 1.08263e-3; #constant needed in J2 propagator
+ 
 AU = 149597870700.0 #Distance between sun and earth in meters
 R_SUN = 6957e5 #Radius of the Sun in meters
 
