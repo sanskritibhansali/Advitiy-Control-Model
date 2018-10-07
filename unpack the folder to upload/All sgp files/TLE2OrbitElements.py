@@ -2,9 +2,7 @@ import numpy as np
 import math
 
 def TLE2OE(line1,line2):    
-    #line1 = ('1 88888U 16059A   80275.98708465 +.00073094 +13844-3 +66816-4 0  9998') #Insert TLE Here
-    #line2 = ('2 88888  72.8435 115.9689 0086731  52.6988 110.5714 16.05824518   105') 
-
+    
     pi = math.pi
     print line1
     SatNo = line1[2:7] 
