@@ -2,56 +2,59 @@ import numpy as np
 import constants_1U as C1U
 import sgp 
 import TLE2OrbitElements as TOE
+import os
 
 
-def filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,sgp_output):
+def filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,fname_load):
     os.chdir('data_files/')
-    fname_load = "sgp_i_TT%g_MS%g_MMo%g_Ecc%g_Incl%g_MAnamoly%g_ArgP%g_Raan%g.csv"%(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)	#load from this file
+    #This function give variable naming to the sgp output .csv file. The filename would contain major
+    #orbit elements those was used in creating the sgp output.
+    
     
     try:
-    	a_file = open(fname_load, 'rb')
-    	my_input = a_file
-    	a_file.close
-    	loaded = True
-    	print 'File found: ' + fname_load
-    except IOError as e:	#if file doesnot exist already it sets flag and calculates it so you don't have to manually check
-    	loaded = False
-    	print('No existing file could be opened.')
-    
-    if loaded == False:
-    	my_input = sgp_output
-     	np.savetxt(fname_load,my_input, delimiter=",")
+        a_file = open(fname_load, 'rb')
+        my_input = a_file
+        a_file.close
+        loaded = True
+        print 'File found: ' + fname_load
+        return loaded
+    except IOError as e:    #if file doesnot exist already it sets flag and calculates it so you don't have to manually check
+        loaded = False
+        print('No existing file could be opened.')
+        return loaded
     '''
-    	print "calculated new file using function"
-    
-     #fname_save = "sgp_Twice_i_tf%g_dt%g_RA%g_in%g_per%g.csv"%(tf,dt,RAAN,Inclinatoin,ArgPer) #save in this file
-    fname_save = "sgp_Twice_i_TT%g_MS%g_MMo%g_Ecc%g_Incl%g_MAnamoly%g_ArgP%g_Raan%g.csv"%(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)  #save in this file
+    if loaded == False:
+        my_input = sgp_output
+         np.savetxt(fname_load,my_input, delimiter=",")
+    '''
 
-    my_input = np.genfromtxt(fname_load, delimiter=",")
-    #do something and get new variable
-    result = 2*my_input
-    
-    np.savetxt(fname_save,result, delimiter=",")
-    print 'saved results ' + fname_save
-   '''
-
+#Function getOrbitdata_TLE calls sgp_fn and create postion and velocity of satellite at different time instants.
+# First It takes TLE elements (line1 and line2) from constant file then using TLE2OE it gets relevent orbital parameters  
+#and then call sgp_fn. 
 def getOrbitData_TLE():
     line1 = C1U.LINE1
     line2 = C1U.LINE2
     MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,DMeanMotion,DDMeanMotion,BStar = TOE.TLE2OE(line1,line2)
-    
-    dT = C1U.dT ## dT is in seconds. total 100 minutes here. 10 is for 1/timestep
-    TT = C1U.TT ## total time in minutes (used in filename)
-    MS = C1U.MODEL_STEP
-    sgp_output = np.zeros([N,7])
-    sgp_output = np.zeros([ len(dT),7], dtype = 'float')
-    sgp_output[:,0],sgp_output[:,1:4],sgp_output[:,4:7] = sgp.sgp_fn(dT,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,DMeanMotion,DDMeanMotion,BStar)
-    
-    filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,sgp_output)
 
-    #np.savetxt("sgp_output_c.csv", sgp_output, delimiter=",") #Saves sgp_output to csv file
 
-def getOrbitData_OrbitELement():
+    dT = C1U.dT ## dT is in seconds.
+    TT = C1U.TT ## total time in minutes
+    MS = C1U.MODEL_STEP ## MS in seconds
+    #filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)
+    fname_load = "sgp_i_TT%g_MS%g_MMo%g_Ecc%g_Incl%g_MAnamoly%g_ArgP%g_Raan%g.csv" \
+    %(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)    #load from this file
+    
+    if filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,fname_load) == False :
+        sgp_output = np.zeros([ len(dT),7], dtype = 'float')
+        sgp_output[:,0],sgp_output[:,1:4],sgp_output[:,4:7] = \
+        sgp.sgp_fn(dT,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,DMeanMotion,DDMeanMotion,BStar)
+        np.savetxt(fname_load,sgp_output, delimiter=",")
+        print 'csv file is created by using TLE data'
+
+
+#Function getOrbitData_OrbitELement calls sgp_fn and create postion and velocity of satellite at different time instants.
+# First It takes orbitalelements from cosntant file  then call sgp_fn.
+def getOrbitData_OrbitElement():
     MeanMo = C1U.MeanMo 
     Eccen = C1U.Eccen 
     Incl_deg  = C1U.Incl_deg
@@ -62,18 +65,22 @@ def getOrbitData_OrbitELement():
     DDMeanMotion = C1U.DDMeanMotion
     BStar = C1U.BStar
     
-    dT = C1U.dT ## dT is in seconds. total 100 minutes here. 10 is for 1/timestep
-    TT = C1U.TT ## total time in minutes (used in filename)
-    MS = C1U.MODEL_STEP
-    sgp_output = np.zeros([N,7])
-    sgp_output = np.zeros([ len(dT),8], dtype = 'float') #7 to 8 for eccentricity calculation
-    sgp_output[:,0],sgp_output[:,1:4],sgp_output[:,4:7] = sgp.sgp_fn(dT,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,DMeanMotion,DDMeanMotion,BStar)
+    dT = C1U.dT ## dT is in seconds.
+    TT = C1U.TT ## total time in minutes
+    MS = C1U.MODEL_STEP ## MS in seconds
+    #filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)
+    fname_load = "sgp_i_TT%g_MS%g_MMo%g_Ecc%g_Incl%g_MAnamoly%g_ArgP%g_Raan%g.csv" \
+    %(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg)    #load from this file
     
-    filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,sgp_output)
 
-    #np.savetxt("sgp_output_b.csv", sgp_output, delimiter=",") #Saves sgp_output to csv file
+    if filename(TT,MS,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,fname_load) == False :
+        sgp_output = np.zeros([ len(dT),7], dtype = 'float')
+        sgp_output[:,0],sgp_output[:,1:4],sgp_output[:,4:7] = \
+        sgp.sgp_fn(dT,MeanMo,Eccen,Incl_deg,MeanAnamoly_deg,ArgP,RAAN_deg,DMeanMotion,DDMeanMotion,BStar)
+        np.savetxt(fname_load,sgp_output, delimiter=",")
+        print 'csv file is created by using orbital elements'
 
 ### Call getOrbitData_TLE or getOrbitData_OrbitELement
 # Uncomment whichever is required
-#getOrbitData_TLE()
-getOrbitData_OrbitELement()
+getOrbitData_TLE()
+#getOrbitData_OrbitElement()
