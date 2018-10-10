@@ -157,6 +157,11 @@ class Satellite:
 	def getgpsData(self):
 		return self.gpsData
 
+	def setJ2Data(self, J2Data):   #J2Data is an array of 7 elements containing v_pos_m,v_vel_m,time_m in sequence
+		self.J2Data = J2Data.copy()
+	def getJ2Data(self):
+		return self.J2Data
+		
 	def setGyroVarBias(self, v_gyro_bias):  #set bias of gyroscope
 		self.GyroVarBias = v_gyro_bias
 	def getGyroVarBias(self):  #returns bias of gyroscope

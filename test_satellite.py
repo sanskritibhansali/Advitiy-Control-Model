@@ -353,3 +353,12 @@ if (bias==v_gpsdata).all():
 	print ("setgpsData and getgpsData correct")
 else:
 	print ("setgpsData or getgpsData incorrect")
+
+
+v_J2data = np.array([-0.00001,0.0,0.3253,10e6,-5e6,-9,1.35])
+Sat4.setJ2Data(v_J2data)
+bias=Sat4.getJ2Data()
+if (bias==v_J2data).all():
+	print ("setJ2Data and getJ2Data correct")
+else:
+	print ("setJ2Data or getJ2Data incorrect")
