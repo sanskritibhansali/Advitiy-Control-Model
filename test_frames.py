@@ -115,7 +115,7 @@ class TestEcif2Orbit(unittest.TestCase):
 		self.assertTrue(np.allclose(fr.ecif2orbit(r,v,np.cross(v,r)),[0.,np.linalg.norm(np.cross(v,r)),0.]))
 
 class Test_qBI_2qBO(unittest.TestCase):	
-
+	
 	def test_south_pole_ideal(self):
 		#above south pole, body frame, orbit frame and eci frame have same attitude wrt each other 
 		r = np.array([0.,0.,-7.07e6])
@@ -125,26 +125,26 @@ class Test_qBI_2qBO(unittest.TestCase):
 		result = fr.qBI2qBO(qBI,r,v)
 
 		self.assertTrue(np.allclose(expected ,result))
-
+	
 	def test_data(self):
-		qBI = np.array([0.5*np.sqrt(1+0.5*np.sqrt(3.)), -0.5*np.sqrt(1+0.5*np.sqrt(3.)), 
-						-0.25*np.sqrt(2/(2+np.sqrt(3))), 0.25*np.sqrt(2/(2+np.sqrt(3)))])
+		qBI = np.array([-0.5*np.sqrt(1+0.5*np.sqrt(3.)), 
+						-0.25*np.sqrt(2/(2+np.sqrt(3))), 0.25*np.sqrt(2/(2+np.sqrt(3))), 0.5*np.sqrt(1+0.5*np.sqrt(3.))])
 		
 		r = np.array([0.,0.,7.07e6])
 		v = np.array([0.,7.0e3,0.])
-		expected = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
+		expected = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),1.,1.,np.sqrt(3.)])
 		result = fr.qBI2qBO(qBI,r,v)
 		
 		self.assertTrue(np.allclose(expected ,result))
 
 class Test_qBO_2qBI(unittest.TestCase):	
 	def test_data2(self):
-		expected = np.array([0.5*np.sqrt(1+0.5*np.sqrt(3.)), -0.5*np.sqrt(1+0.5*np.sqrt(3.)), 
-						-0.25*np.sqrt(2/(2+np.sqrt(3))), 0.25*np.sqrt(2/(2+np.sqrt(3)))])
+		expected = np.array([-0.5*np.sqrt(1+0.5*np.sqrt(3.)), 
+						-0.25*np.sqrt(2/(2+np.sqrt(3))), 0.25*np.sqrt(2/(2+np.sqrt(3))), 0.5*np.sqrt(1+0.5*np.sqrt(3.))])
 		
 		r = np.array([0.,0.,7.07e6])
 		v = np.array([0.,7.0e3,0.])
-		v_q_BO = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
+		v_q_BO = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),1.,1.,np.sqrt(3.)])
 		result = fr.qBO2qBI(v_q_BO,r,v)
 		
 		self.assertTrue(np.allclose(expected ,result))
