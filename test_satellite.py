@@ -346,3 +346,10 @@ if (bias==v_gyro_bias).all():
 else:
 	print ("setGyroVarBias and getGyroVarBias incorrect")
 
+v_gpsdata = np.array([-0.00001,0.0,0.3253,10e6,-5e6,-9,1.35])
+Sat4.setgpsData(v_gpsdata)
+bias=Sat4.getgpsData()
+if (bias==v_gpsdata).all():
+	print ("setgpsData and getgpsData correct")
+else:
+	print ("setgpsData or getgpsData incorrect")

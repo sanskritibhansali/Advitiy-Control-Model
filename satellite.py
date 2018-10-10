@@ -152,6 +152,11 @@ class Satellite:
 	def getAppTorque_b(self):                #get applied torque
 	    return self.v_app_torque_b	
 
+	def setgpsData(self, gpsData): #gpsData is an array of 7 elements containing v_pos_m,v_vel_m,time_m in sequence
+		self.gpsData = gpsData.copy()
+	def getgpsData(self):
+		return self.gpsData
+
 	def setGyroVarBias(self, v_gyro_bias):  #set bias of gyroscope
 		self.GyroVarBias = v_gyro_bias
 	def getGyroVarBias(self):  #returns bias of gyroscope
