@@ -128,13 +128,6 @@ if (v_vel_i == state2).all():
 else:
 	print ("setVel or getVel incorrect")
 
-Sat4.setQ_BI(q)
-Q=Sat4.getQ_BI()
-
-if (Q==q).all():
-	print ("setQ_BI and getQ_BI correct")
-else:
-	print ("setQ_BI and getQ_BI incorrect")
 
 Sat4.setQ_BO(q1)
 Q=Sat4.getQ_BO()
@@ -144,6 +137,7 @@ if (Q==q1).all():
 else:
 	print ("setQ_BO and getQ_BO incorrect")
 
+		
 Sat4.setW_BO_b(w)
 a=Sat4.getW_BO_b()
 b = Sat4.getW_BI_b()
@@ -157,6 +151,18 @@ if (b==w2).all():
 	print ("getW_BI_b correct")
 else:
 	print ("getW_BI_b incorrect")
+
+expected = np.array([-0.5*np.sqrt(1+0.5*np.sqrt(3.)), 
+						-0.25*np.sqrt(2/(2+np.sqrt(3))), 0.25*np.sqrt(2/(2+np.sqrt(3))), 0.5*np.sqrt(1+0.5*np.sqrt(3.))])
+		
+Sat4.setPos(np.array([0.,0.,7.07e6]))
+Sat4.setVel(np.array([0.,7.0e3,0.]))
+Sat4.setQ_BO((0.5/np.sqrt(2.))*np.array([np.sqrt(3.),1.,1.,np.sqrt(3.)]))
+Q=Sat4.getQ_BI()
+if (np.allclose(Q, expected))==1:
+	print ("getQ_BI correct")
+else:
+	print ("getQ_BI incorrect")
 
 Sat4.setDisturbance_b(arr1)
 a=Sat4.getDisturbance_b()

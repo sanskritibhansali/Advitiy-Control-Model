@@ -4,7 +4,10 @@ import numpy as np
 import frames as fs
 
 class Satellite:
-
+	
+	# units followed
+	# magnetic field is in nanoTesla
+	# position and velocity of satellite in SI units
 	def __init__(self,v_state0,time0):
 
 		self.setTime(time0)
@@ -34,19 +37,16 @@ class Satellite:
 
 		return self.v_vel_i
 
-	def setQ_BI(self,v_q):	#set exact quaternion from inertial frame to body frame
-
-		self.v_q_BI=v_q.copy()
-
-	def getQ_BI(self):	#get exact quaternion from inertial frame to body frame
-		return self.v_q_BI
-
 	def setQ_BO(self,v_q):	#set error quaternion from orbit frame to body frame
 		self.v_state[0:4]=v_q.copy()
 
 	def getQ_BO(self):	#get error quaternion from orbit frame to body frame
 		return self.v_state[0:4]
 	
+	def getQ_BI(self):	#get exact quaternion from inertial frame to body frame
+		v_q_BI = fs.qBO2qBI(self.v_state[0:4],self.v_pos_i,self.v_vel_i)
+		return v_q_BI
+
 	def setW_BO_b(self,v_w):	#set exact angular velocity of body with respect to orbit expressed in body frame
 		self.v_state[4:7]=v_w.copy()
 
@@ -95,13 +95,12 @@ class Satellite:
 		self.v_sun_i = v_sv_i.copy()	
 	def getSun_i(self):	#return sun in eci
 		return self.v_sun_i
-
-	def setMag_i(self,v_mag_i):	#set mag in eci
-		self.v_mag_i = v_mag_i.copy()		
 	def getSun_o(self):	#get sun vector in orbit
 		v_sun_o = fs.ecif2orbit(self.v_pos_i,self.v_vel_i,self.v_sun_i)
 		return	v_sun_o
 	
+	def setMag_i(self,v_mag_i):	#set mag in eci 
+		self.v_mag_i = v_mag_i.copy()		
 	def getMag_i(self):	#return mag in eci
 		return self.v_mag_i
 	def getMag_o(self):	#return mag in orbit
