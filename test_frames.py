@@ -127,23 +127,23 @@ class Test_qBI_2qBO(unittest.TestCase):
 		self.assertTrue(np.allclose(expected ,result))
 	
 	def test_data(self):
-		qBI = 0.5 * np.array([0,-1,0,np.sqrt(3)])
+		qIB = 0.5 * np.array([0,-1,0,np.sqrt(3)])
 		r = np.array([0.,0.,7.07e6])
 		v = np.array([0.,7.0e3,0.])
-		expected = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
-		result = fr.qBI2qBO(qBI,r,v)
+		expectedInv = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
+		result = fr.qBI2qBO(qnv.quatInv(qIB),r,v)
 		
-		self.assertTrue(np.allclose(expected ,result))
+		self.assertTrue(np.allclose(qnv.quatInv(expectedInv) ,result))
 
 class Test_qBO_2qBI(unittest.TestCase):	
 	def test_data2(self):
-		qBO = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
+		qOB = (0.5/np.sqrt(2.))*np.array([np.sqrt(3.),np.sqrt(3.),1.,1.])
 		r = np.array([0.,0.,7.07e6])
 		v = np.array([0.,7.0e3,0.])
-		qBI = 0.5 * np.array([0,-1,0,np.sqrt(3)])
-		result = fr.qBO2qBI(qBO,r,v)
+		qIB = 0.5 * np.array([0,-1,0,np.sqrt(3)])
+		result = fr.qBO2qBI(qnv.quatInv(qIB),r,v)
 		
-		self.assertTrue(np.allclose(qBI ,result))
+		self.assertTrue(np.allclose(qnv.quatInv(qOB) ,result))
 
 @ddt
 class Test_wBIB_2_wBOB(unittest.TestCase):
