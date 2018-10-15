@@ -93,8 +93,9 @@ def qBI2qBO(v_q_BI,v_pos_i,v_vel_i):
 	m_DCM_OI = np.array([x,y,z])
 	v_q_IO = qnv.rotm2quat(np.transpose(m_DCM_OI))
 	v_q_BO = qnv.quatMultiplyNorm(v_q_BI,v_q_IO)
-	if v_q_BO[3] < 0.:
-		v_q_BO = -1.*v_q_BO.copy()
+	
+  if v_q_BO[3] < 0.:
+  v_q_BO = -1.*v_q_BO.copy()
 	v_q_BO = v_q_BO/np.linalg.norm(v_q_BO.copy())	
 
 	return v_q_BO
