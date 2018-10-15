@@ -9,12 +9,12 @@ from dynamics import x_dot_BO
 import frames as fs
 import math
 import numpy as np
+import os
 import qnv
 import satellite
 import sensor
 import solver as sol
 from test_cases import * 
-from TorqueApplied import ctrlTorqueToVoltage,currentToTorque,I
 
 #Read position, velocity, sun-vector, light-boolean, magnetic field (in nanoTeslas) in ECIF from data file
 
@@ -66,16 +66,19 @@ print (Nmodel ,'Simulation for ' ,MODEL_STEP*(Nmodel-1),'seconds')
 
 #initialize empty matrices which will be needed in this simulation
 v_state = np.zeros((Nmodel,7))
-v_q_BO = np.zeros((Nmodel,4))
-v_w_BOB = np.zeros((Nmodel,3))
 euler = np.zeros((Nmodel,3))
-torque_dist = np.zeros((Nmodel,3))
+torque_dist_total = np.zeros((Nmodel,3))
+torque_dist_gg = np.zeros((Nmodel,3))
+torque_dist_aero = np.zeros((Nmodel,3))
+torque_dist_solar = np.zeros((Nmodel,3))
+torque_control = np.zeros((Nmodel,3))
 
 #defining initial conditions
-v_q_BO[0,:] = v_q0_BO                       #perfectly aligned body frame and orbit frame (v_q0_BO is initial value defined in constants)
-v_w_BOB[0,:] = v_w0_BOB                     #Body frame is not rotating wrt orbit frame (v_w0_BOB is initial value defined in constants)
-euler[0,:] = qnv.quat2euler(v_q_BO[0,:])    #finding initial euler angles
-v_state[0,:] = np.hsatck((v_q_BO,v_w_BOB))  #initial state based on initial qBO and wBOB
+#initial state based on initial qBO and wBOB
+#perfectly aligned body frame and orbit frame (v_q0_BO is initial value defined in constants)
+#Body frame is not rotating wrt orbit frame (v_w0_BOB is initial value defined in constants)
+v_state[0,:] = np.hstack((v_q0_BO,v_w0_BOB))                         
+euler[0,:] = qnv.quat2euler(v_q0_BO)    #finding initial euler angles
 
 #Make satellite object
 Advitiy = satellite.Satellite(v_state[0,:],t0)   #t0 from line 42 of main_code
@@ -84,14 +87,15 @@ Advitiy = satellite.Satellite(v_state[0,:],t0)   #t0 from line 42 of main_code
 Advitiy.setControl_b(np.array([0.,0.,0.]))		
 Advitiy.setMag_b_m_c(m_magnetic_field_i[0,:]) 
 
+print(Ncontrol)
+print(Nmodel)
 #-------------Main for loop---------------------
 for  i in range(0,Ncontrol):  #loop for control-cycle
 	
 	if math.fmod(i,int(Ncontrol/100)) == 0: #we are printing percentage of cycle completed to keep track of simulation
 		print (int(100*i/Ncontrol)) 
 
-	for k in range (0,int(Ncontrol/Nmodel)):  #loop for environment-cycle
-	
+	for k in range (0,int(Nmodel/Ncontrol)):  #loop for environment-cycle
 		#Set satellite parameters
 		#state is set inside solver
 		Advitiy.setPos(m_sgp_output_i[i,1:4])
@@ -114,18 +118,22 @@ for  i in range(0,Ncontrol):  #loop for control-cycle
 
 		if (distbool == 1):
 			#getting disturbance torque by disturbance model
-			dist.ggTorqueb(Advitiy).copy()
-			dist.aeroTorqueb(Advitiy).copy()
-			dist.solarTorqueb(Advitiy).copy()
-			torque_dist[i*int(Ncontrol/Nmodel)+k,:] = Advitiy.getsolarDisturbance_b()+Advitiy.getaeroDisturbance_b()+Advitiy.getggDisturbance_b()
-			Advitiy.setDisturbance_i(torque_dist[i*int(Ncontrol/Nmodel)+k,:].copy())
+			dist.ggTorqueb(Advitiy)
+			dist.aeroTorqueb(Advitiy)
+			dist.solarTorqueb(Advitiy)
+			
+			torque_dist_gg[i*int(Ncontrol/Nmodel)+k,:] = Advitiy.getggDisturbance_b()
+			torque_dist_aero[i*int(Ncontrol/Nmodel)+k,:] = Advitiy.getaeroDisturbance_b()
+			torque_dist_solar[i*int(Ncontrol/Nmodel)+k,:] = Advitiy.getsolarDisturbance_b()
+			torque_dist_total[i*int(Ncontrol/Nmodel)+k,:] = torque_dist_gg[i*int(Ncontrol/Nmodel)+k,:] + torque_dist_aero[i*int(Ncontrol/Nmodel)+k,:] + torque_dist_solar[i*int(Ncontrol/Nmodel)+k,:]
+			Advitiy.setDisturbance_b(torque_dist_total[i*int(Ncontrol/Nmodel)+k,:].copy())
 			
 		#Use rk4 solver to calculate the state for next step
 		sol.rk4Quaternion(Advitiy,x_dot_BO,h)
 		
 		#storing data in matrices
 		v_state[i*int(Ncontrol/Nmodel)+k+1,:] = Advitiy.getState()
-		euler[i*int(Ncontrol/Nmodel)+k+1,:] = qnv.quat2euler(v_q_BO[i*int(Ncontrol/Nmodel)+k+1,:])
+		euler[i*int(Ncontrol/Nmodel)+k+1,:] = qnv.quat2euler(Advitiy.getQ_BO())
 
 	#sensor reading
 	if (sensbool == 0):
@@ -148,9 +156,9 @@ for  i in range(0,Ncontrol):  #loop for control-cycle
 
 	#Estimated quaternion
 	if (estbool == 0): #qBO is same as obtained by integrator
-		Advitiy.setQuest(defblock.estimator(Advitiy))
+		Advitiy.setQUEST(defblock.estimator(Advitiy))
 
-	if (estbool == 1): #qBO is obtained using Quest/MEKF
+	#if (estbool == 1): #qBO is obtained using Quest/MEKF
 
 	#control torque
 	
@@ -158,16 +166,16 @@ for  i in range(0,Ncontrol):  #loop for control-cycle
 		#getting default control torque (zero in our case)
 		Advitiy.setControl_b(defblock.controller(Advitiy))
 	
-	if (contcons == 1):
+	#if (contcons == 1):
 		#getting control torque by detumbling controller
 	
 	#torque applied
 	
-	if (actcons == 0):
+	if (actbool == 0):
 		#applied torque is equal to required torque
 		Advitiy.setAppTorque_b(Advitiy.getControl_b())
 	
-	if (actcons == 1):
+	#if (actcons == 1):
 		#getting applied torque by actuator modelling (magnetic torque limitation is being considered)
 
 #save the data files
@@ -179,4 +187,7 @@ np.savetxt('velocity.csv',m_sgp_output_i[init:end+1,4:7], delimiter=",")
 np.savetxt('time.csv',m_sgp_output_i[init:end+1,0] - t0, delimiter=",")
 np.savetxt('state.csv',v_state, delimiter=",")
 np.savetxt('euler.csv',euler, delimiter=",")
-np.savetxt('disturbance.csv',torque_dist, delimiter=",")
+np.savetxt('disturbance-total.csv',torque_dist_total, delimiter=",")
+np.savetxt('disturbance-gg.csv',torque_dist_gg, delimiter=",")
+np.savetxt('disturbance-solar.csv',torque_dist_solar, delimiter=",")
+np.savetxt('disturbance-aero.csv',torque_dist_aero, delimiter=",")

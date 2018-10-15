@@ -10,10 +10,9 @@ G = 6.67408e-11; #universal gravitational constant, SI
 M_EARTH = 5.972e24; #mass of earth, kg
 R_EARTH = 6371.0e3; #radius of earth, m
 ALTITUDE = 700e3 # (in m) assunming height of satellite 700 km
-r = R_EARTH + ALTITUDE #Distance of satellite from center of earth m
-v_w_IO_o = np.array([0., np.sqrt(G*M_EARTH/(r)**3), 0.]) #angular velocity of orbit frame wrt inertial frame in orbit frame
-J2 = 1.08263e-3; #constant needed in J2 propagator
- 
+V_R_B_COE = R_EARTH + ALTITUDE #Distance of satellite from center of earth m
+v_w_IO_o = np.array([0., np.sqrt(G*M_EARTH/(V_R_B_COE)**3), 0.]) #angular velocity of orbit frame wrt inertial frame in orbit frame
+
 AU = 149597870700.0 #Distance between sun and earth in meters
 R_SUN = 6957e5 #Radius of the Sun in meters
 
@@ -53,13 +52,6 @@ v_Ax = np.array([0.01,0.,0.])	#area vector perpendicular to x-axis in m^2
 v_Ay = np.array([0.,0.01,0.])	#area vector perpendicular to y-axis in m^2
 v_Az = np.array([0.,0.,0.01])	#area vector perpendicular to z-axis in m^2
 
-#------------Initial conditions
-v_q0_BO = np.array([1.,0.,0.,0.])	#unit quaternion initial condition (qBO means quaternion whose rotation matrix transmforms vector in body frame to vector in orbit frame)
-
-MODEL_STEP=0.1
-CONTROL_STEP = 2.0	#control cycle time period in second
-h = 0.001 #step size of integration in seconds
-
 INDUCTANCE = 68e-3	#Inductance of torquer in Henry
 RESISTANCE = 107.0	#Resistance of torquer	in Ohm
 PWM_AMPLITUDE = 3.3	#PWM amplitude in volt
@@ -73,5 +65,26 @@ REFLECTIVITY = 0.2
 r_COG_2_COM_b = np.array([-0.69105608e-3,-0.69173140e-3,-2.37203930e-3])
 AERO_DRAG = 2.2
 RHO = 0.218e-12
+
+#Sunsensor (random values)
+v_S1 = np.array([1,0,0])
+v_S2 = np.array([-1,0,0])
+v_S3 = np.array([0,1,0])
+v_S4 = np.array([0,-1,0])
+v_S5 = np.array([0,0,1])
+v_S6 = np.array([0,0,-1])
+
+SS_GAIN = 1
+SS_QUANTIZER = 3
+SS_THRESHOLD = 0.5
+
+ADC_BIAS = np.array([0,0,0,0,0,0])
+#GPS (random values)
+GPS_POS_BIAS = np.array([0,0,0])
+GPS_VEL_BIAS = np.array([0,0,0])
+GPS_TIME_BIAS = 0
+
+#Magnetometer (random values)
+MAG_BIAS = np.array([0,0,0])
 
 k_detumbling = 4*np.pi*(1+sin(radians(Inclination-11)))*Jmin/TimePeriod    #gain constant in B_dot controller (from book by F. Landis Markley)
